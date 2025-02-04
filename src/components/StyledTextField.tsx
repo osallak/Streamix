@@ -1,30 +1,35 @@
-import { styled } from "@mui/system";
-import { TextField } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
 
-export const StyledTextField = styled(TextField)({
-  width: "100%",
-  maxWidth: "450px",
-  "& .MuiInputBase-root": {
-    height: "56px",
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    border: "1px solid #333",
-    borderRadius: 0,
-    color: "white",
-    fontSize: "1.1rem",
-    "&:hover": {
-      border: "1px solid #666",
+export const StyledTextField = styled(TextField)(({ theme }) => ({
+  width: "clamp(200px, 60vw, 600px)",
+  backgroundColor: "#fff",
+  transition: "all .2s ease",
+  "& label": {
+    fontFamily: "system-ui",
+    left: 8,
+    transition: "all .2s ease",
     },
-    "&.Mui-focused": {
-      border: "1px solid white",
-    },
+  "& label.Mui-focused ": {
+    fontFamily: "system-ui",
+    fontWeight: "bold",
+    color: "rgba(0,0,0,.7)",
+    top: 8,
   },
-  "& .MuiInput-underline:before": {
-    borderBottom: "none",
+  "& label.MuiInputLabel-animated ": {
+    top: 8,
   },
   "& .MuiInput-underline:after": {
-    borderBottom: "none",
+    border: "none",
   },
-  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-    borderBottom: "none",
+  "& .MuiInput-underline:before": {
+    border: "none !important",
   },
-});
+  "& .MuiInputBase-root": {
+    border: "none",
+    padding: "8px",
+    "& fieldset": {
+      border: "none",
+  },
+  },
+}));

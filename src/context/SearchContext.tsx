@@ -1,18 +1,20 @@
-import { createContext, useContext, useState } from "react";
+"use client";
+
+import { createContext, ReactNode, useContext, useState } from "react";
 
 interface SearchContextType {
   query: string;
-  handleSearchChange: (value: string) => void;
+  handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   clearSearchChange: () => void;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
-export function SearchProvider({ children }: { children: React.ReactNode }) {
+export function SearchProvider({ children }: { children: ReactNode }) {
   const [query, setQuery] = useState("");
 
-  const handleSearchChange = (value: string) => {
-    setQuery(value);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
   };
 
   const clearSearchChange = () => {

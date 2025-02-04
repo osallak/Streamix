@@ -1,98 +1,209 @@
 "use client";
 
-import { SearchProvider } from "@/context/SearchContext";
-import { useSearch } from "@/context/SearchContext";
-import Navbar from "@/components/Navbar";
-import Background from "@/components/Background";
+import {
+  Button,
+  Container,
+  Stack,
+  Typography,
+  Toolbar,
+  IconButton,
+} from "@mui/material";
+import { Movie, Tv } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import { useSearch } from "@/context/SearchContext";
+import { StyledTextField } from "@/components/StyledTextField";
 import { useState } from "react";
+import type { ReactElement } from "react";
 
-function HomeContent() {
+export default function Home(): ReactElement {
+  const router = useRouter();
   const { query, handleSearchChange } = useSearch();
   const [error, setError] = useState("");
-  const router = useRouter();
+
+  const handleEnterKey = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") handleSearch();
+  };
 
   const handleSearch = () => {
     if (query === "") {
       setError("Please enter movies, tv shows or people");
-    } else {
-      router.push(`/browse/${query}`);
-      setError("");
+      return;
     }
+    setError("");
+    router.push(`/browse/${query}`);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter") {
-      handleSearch();
-    }
+  const handleMoviesClick = () => {
+    router.push("/discover/movies");
+  };
+
+  const handleTvClick = () => {
+    router.push("/discover/series");
   };
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <Navbar />
-      <Background />
+    <Container
+      maxWidth={false}
+      sx={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(rgba(0, 0, 0, .8),rgba(0, 0, 0, .4), rgba(0, 0, 0, .8)), url(/assets/imgs/bg.jpg)",
+        backgroundSize: "cover",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Toolbar disableGutters>
+        <Stack
+          direction="row"
+          py={4}
+          px={2}
+          justifyContent="space-between"
+          sx={{ width: "100%" }}
+        >
+          <Typography
+            onClick={() => router.push("/")}
+            sx={{
+              color: "secondary.main",
+              fontFamily: "Inter",
+              fontWeight: 700,
+              fontSize: { xs: "1.5rem", sm: "2rem" },
+              cursor: "pointer",
+              letterSpacing: "1px",
+            }}
+          >
+            STREAMIX
+          </Typography>
+          <Stack direction="row" spacing={{ xs: 0.5, sm: 2 }}>
+            <IconButton color="secondary" onClick={handleMoviesClick}>
+              <Movie
+                sx={{
+                  width: { xs: "1.5rem", sm: "2rem" },
+                  height: { xs: "1.5rem", sm: "2rem" },
+                }}
+              />
+            </IconButton>
+            <IconButton color="secondary" onClick={handleTvClick}>
+              <Tv
+                sx={{
+                  width: { xs: "1.5rem", sm: "2rem" },
+                  height: { xs: "1.5rem", sm: "2rem" },
+                }}
+              />
+            </IconButton>
+          </Stack>
+        </Stack>
+      </Toolbar>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-8">
-        {/* Main Content */}
-        <div className="w-full max-w-[800px] mx-auto text-center">
-          <h1 className="text-4xl md:text-[4rem] font-bold text-white mb-4 leading-tight">
-            Unlimited movies, TV
-            <br />
-            shows, and more.
-          </h1>
-
-          <p className="text-xl md:text-2xl text-white mb-4">
-            Watch anywhere. Cancel anytime.
-          </p>
-
-          <p className="text-lg md:text-xl text-white mb-6">
-            Ready to watch? Enter your Movie or TV Serie.
-          </p>
-
-          {/* Search Section */}
-          <div className="flex w-full max-w-[900px] mx-auto">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Search"
-              className="flex-1 h-[60px] px-4 
-                       bg-[rgba(0,0,0,0.75)] 
-                       border border-[#333333]
-                       text-white text-[20px]
-                       placeholder-[#8c8c8c]
-                       focus:outline-none focus:border-white
-                       transition-all"
-              style={{
-                fontFamily: "Arial, sans-serif",
-              }}
-            />
-            <button
-              onClick={handleSearch}
-              className="h-[60px] px-8
-                       bg-[#E50914] hover:bg-[#f40612]
-                       text-white text-[26px] font-normal
-                       transition-colors"
-              style={{
-                fontFamily: "Arial, sans-serif",
-              }}
-            >
-              SEARCH
-            </button>
-          </div>
-
-          {error && <p className="mt-2 text-[#E87C03]">{error}</p>}
-        </div>
-      </div>
-    </main>
-  );
-}
-
-export default function Home() {
-  return (
-    <SearchProvider>
-      <HomeContent />
-    </SearchProvider>
+      <Stack
+        direction="column"
+        width="100%"
+        sx={{ flexGrow: 1 }}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Typography
+          component="h1"
+          variant="h1"
+          sx={{
+            textAlign: "center",
+            fontFamily: "Inter",
+            fontWeight: 500,
+            color: "primary.main",
+            fontSize: "clamp(2rem, 5vw, 4rem)",
+            lineHeight: 1.2,
+          }}
+        >
+          Unlimited movies, TV
+        </Typography>
+        <Typography
+          component="h1"
+          variant="h1"
+          sx={{
+            textAlign: "center",
+            fontFamily: "Inter",
+            fontWeight: 500,
+            color: "primary.main",
+            fontSize: "clamp(2rem, 5vw, 4rem)",
+            lineHeight: 1.2,
+          }}
+        >
+          shows, and more.
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            textAlign: "center",
+            marginTop: "12px",
+            fontFamily: "Inter",
+            fontWeight: 400,
+            color: "primary.main",
+            fontSize: "clamp(1rem, 3vw, 1.6rem)",
+          }}
+        >
+          Watch anywhere. Cancel anytime.
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            textAlign: "center",
+            marginTop: "12px",
+            fontFamily: "Inter",
+            fontWeight: 400,
+            color: "primary.main",
+            fontSize: "1.1rem",
+          }}
+        >
+          Ready to watch? Enter your Movie or TV Serie.
+        </Typography>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          mt="16px"
+          spacing={{ xs: 2, md: 0 }}
+          sx={{ width: "100%" }}
+          justifyContent="center"
+          alignItems={{ xs: "center", md: "normal" }}
+        >
+          <StyledTextField
+            placeholder="Search"
+            variant="standard"
+            onChange={handleSearchChange}
+            onKeyDown={handleEnterKey}
+            value={query}
+          />
+          <Button
+            color="error"
+            variant="contained"
+            sx={{
+              borderRadius: "0px",
+              boxShadow: 0,
+              fontFamily: "Inter",
+              fontWeight: 500,
+              px: 8,
+              bgcolor: "secondary.main",
+              "&:hover": {
+                bgcolor: "#b2070e",
+              },
+            }}
+            onClick={handleSearch}
+          >
+            Search
+          </Button>
+        </Stack>
+        {error && (
+          <Typography
+            variant="caption"
+            sx={{
+              color: "warning.light",
+              mt: 2,
+              fontFamily: "Inter",
+              fontWeight: 400,
+            }}
+          >
+            {error}
+          </Typography>
+        )}
+      </Stack>
+    </Container>
   );
 }

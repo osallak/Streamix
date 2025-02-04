@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
