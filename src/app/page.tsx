@@ -34,11 +34,11 @@ export default function Home(): ReactElement {
   };
 
   const handleMoviesClick = () => {
-    router.push("/discover/movies");
+    router.push("/movies");
   };
 
   const handleTvClick = () => {
-    router.push("/discover/series");
+    router.push("/series");
   };
 
   return (

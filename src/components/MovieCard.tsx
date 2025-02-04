@@ -1,26 +1,22 @@
 "use client";
 
-import { Box, Stack, Typography, Button, IconButton } from "@mui/material";
-import { Add, PlayArrow } from "@mui/icons-material";
-import Image from "next/image";
+import {
+  Box,
+  Stack,
+  Typography,
+  Button,
+  IconButton,
+  Grid,
+} from "@mui/material";
+import { PlayArrow, Info } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTrailer } from "@/hooks/useTrailer";
 import YoutubePlayer from "./YoutubePlayer";
+import { Movie } from "@/types/movie";
 
 interface MovieCardProps {
-  movie: {
-    id: number;
-    title?: string;
-    name?: string;
-    poster_path: string | null;
-    profile_path?: string | null;
-    vote_average?: number;
-    release_date?: string;
-    first_air_date?: string;
-    overview?: string;
-    known_for_department?: string;
-  };
+  movie: Movie;
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {
@@ -28,60 +24,58 @@ export default function MovieCard({ movie }: MovieCardProps) {
   const { trailer, getTrailer } = useTrailer();
   const router = useRouter();
 
-  const title = movie.title || movie.name || "Untitled";
-  const releaseYear = (movie.release_date || movie.first_air_date || "").split(
-    "-"
-  )[0];
-  const imageUrl = movie.profile_path
-    ? `https://image.tmdb.org/t/p/w500${movie.profile_path}`
-    : movie.poster_path
-    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-    : "/placeholder.jpg";
-  const isPerson = !!movie.known_for_department;
-
   useEffect(() => {
-    if (isHovered && !isPerson) {
-      getTrailer(movie.id, movie.first_air_date ? "tv" : "movie");
+    if (isHovered && movie?.id) {
+      getTrailer(movie.id, "movie");
     }
-  }, [getTrailer, isHovered, movie.id, movie.first_air_date, isPerson]);
+  }, [isHovered, movie, getTrailer]);
 
-  const handlePlay = () => {
+  const imageUrl = movie?.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    : "/no-image.png";
+
+  const backdropUrl = movie?.backdrop_path
+    ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
+    : imageUrl;
+
+  const title = movie?.title || "Unknown Title";
+  const releaseYear = movie.release_date?.split("-")[0] || "";
+
+  const handlePlayClick = () => {
     router.push(`/watch/${movie.id}`);
   };
 
-  const handleAddToWatchLater = () => {
-    // TODO: Implement watch later functionality
+  const handleMoreInfo = () => {
+    // TODO: Implement movie info modal
   };
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        width: "100%",
-        paddingTop: "150%", // 2:3 aspect ratio for movie posters
-        cursor: "pointer",
-        zIndex: 0,
-        transition: "all .5s ease",
-        ...(isHovered && { transform: "scale(1.08)", zIndex: 99 }),
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <Grid
+      item
+      xs={12}
+      sm={4}
+      md={3}
+      lg={2.4}
+      sx={{ display: "flex", cursor: "pointer" }}
     >
       <Box
         sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+          transition: "all .5s ease",
+          ...(isHovered && { transform: "scale(1.08)", zIndex: 99 }),
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <Image
+        <img
           src={imageUrl}
-          alt={`${title} (${releaseYear})`}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          alt={title}
           style={{
+            width: "100%",
+            height: "100%",
             objectFit: "cover",
           }}
         />
@@ -91,12 +85,17 @@ export default function MovieCard({ movie }: MovieCardProps) {
             opacity: 0,
             transition: "all .5s ease",
             ...(isHovered && { opacity: 1 }),
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
           }}
         >
           {isHovered && (
             <Stack
               direction="column"
-              width={"100%"}
+              width="100%"
               height="100%"
               sx={{
                 position: "absolute",
@@ -107,37 +106,34 @@ export default function MovieCard({ movie }: MovieCardProps) {
             >
               <Box
                 sx={{
-                  width: "calc(100% - 2px)",
+                  width: "100%",
                   height: "40%",
-                  position: "absolute",
-                  top: 0,
-                  bottom: "40%",
-                  zIndex: -1,
+                  position: "relative",
                 }}
               >
-                <Image
-                  src={imageUrl}
-                  alt={title}
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </Box>
-
-              <Box sx={{ width: "100%", height: "40%", position: "relative" }}>
                 {trailer ? (
-                  <YoutubePlayer id={trailer} />
+                  <YoutubePlayer
+                    videoId={trailer}
+                    buttonSize="small"
+                    autoPlay={true}
+                    muted={true}
+                  />
                 ) : (
-                <Image
-                  src={imageUrl}
-                  alt={title}
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
+                  <img
+                    src={backdropUrl}
+                    alt={title}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
                 )}
                 <Box
                   sx={{
                     height: "100%",
-                    background: "linear-gradient(transparent 0%, #141414 100%)",
+                    background:
+                      "linear-gradient(transparent 50%, #141414 100%)",
                     position: "absolute",
                     bottom: 0,
                     width: "100%",
@@ -146,141 +142,102 @@ export default function MovieCard({ movie }: MovieCardProps) {
               </Box>
 
               <Stack
-                height={"50%"}
+                height="60%"
                 sx={{
                   p: 2,
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "flex-end",
+                  justifyContent: "space-between",
                 }}
-                spacing={2}
               >
-                <Stack spacing={0.5}>
-                  <Stack direction={"row"} alignItems="center" spacing={2}>
+                <Stack spacing={1}>
+                  <Stack>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          fontFamily: "NBOLD",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        {title}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          fontFamily: "NRegular",
+                          fontSize: "0.8rem",
+                        }}
+                      >
+                        ({releaseYear})
+                      </Typography>
+                    </Stack>
                     <Typography
                       sx={{
-                        color: "primary.main",
-                        fontFamily: "NBOLD",
-                        fontSize: "1rem",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {title}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "primary.main",
+                        color: "#e50914",
+                        textTransform: "capitalize",
                         fontFamily: "NBOLD",
                         fontSize: "0.8rem",
                       }}
-                      variant="caption"
-                      component={"span"}
                     >
-                      ({releaseYear || "no Date"})
+                      movie
                     </Typography>
                   </Stack>
+
                   <Typography
                     sx={{
-                      color: "secondary.main",
-                      fontFamily: "NBOLD",
-                      textTransform: "capitalize",
-                      fontSize: "0.75rem",
+                      color: "white",
+                      fontFamily: "NLight",
+                      fontSize: "0.8rem",
                     }}
-                    variant="caption"
-                    component={"span"}
                   >
-                    {isPerson ? movie.known_for_department || "Actor" : "movie"}
+                    {movie.overview?.slice(0, 60)}...
                   </Typography>
                 </Stack>
 
-                <Typography
-                  sx={{
-                    color: "primary.main",
-                    fontFamily: "NLight",
-                    fontSize: "0.8rem",
-                    lineHeight: 1.2,
-                    overflow: "hidden",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    textOverflow: "ellipsis",
-                    mb: 1,
-                  }}
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ flexGrow: 1 }}
                 >
-                  {movie.overview?.slice(0, 80) || ""}...
-                </Typography>
-
-                {!isPerson && (
-                  <Stack
-                    direction={"row"}
-                    spacing={2}
-                    justifyContent="space-between"
-                    alignItems={"center"}
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handlePlayClick}
+                    startIcon={<PlayArrow />}
+                    sx={{
+                      bgcolor: "white",
+                      color: "black",
+                      textTransform: "none",
+                      fontFamily: "NBOLD",
+                      px: 4,
+                      "&:hover": {
+                        bgcolor: "rgba(255,255,255,0.75)",
+                      },
+                    }}
                   >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={
-                        <PlayArrow
-                          sx={{
-                            width: "1.5rem",
-                            height: "1.5rem",
-                            ml: -0.5,
-                            mr: -0.5,
-                          }}
-                        />
-                      }
-                      sx={{
-                        px: 2,
-                        py: 0.5,
-                        fontFamily: "NBOLD",
-                        fontSize: "0.8rem",
-                        textTransform: "none",
-                        bgcolor: "white",
-                        color: "black",
-                        minWidth: 0,
-                        "&:hover": {
-                          bgcolor: "rgba(255, 255, 255, 0.75)",
-                        },
-                      }}
-                      onClick={handlePlay}
-                    >
-                      Play
-                    </Button>
-                    <Stack alignItems="center" spacing={0.5}>
-                      <Box
-                        sx={{
-                          position: "relative",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                        }}
-                      >
-                        <IconButton
-                          sx={{
-                            color: "primary.main",
-                            bgcolor: "rgba(0, 0, 0, 0.5)",
-                            border: "2px solid",
-                            borderColor: "primary.main",
-                            "&:hover": {
-                              bgcolor: "rgba(0, 0, 0, 0.7)",
-                            },
-                          }}
-                          onClick={handleAddToWatchLater}
-                        >
-                          <Add />
-                        </IconButton>
-                      </Box>
-                    </Stack>
-                  </Stack>
-                )}
+                    Play
+                  </Button>
+                  <IconButton
+                    size="small"
+                    onClick={handleMoreInfo}
+                    sx={{
+                      color: "white",
+                      "&:hover": {
+                        bgcolor: "rgba(255,255,255,0.1)",
+                      },
+                    }}
+                  >
+                    <Info sx={{ fontSize: "2rem", opacity: 0.4 }} />
+                  </IconButton>
+                </Stack>
               </Stack>
             </Stack>
           )}
         </Box>
       </Box>
-    </Box>
+    </Grid>
   );
 }
