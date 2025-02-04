@@ -3,8 +3,10 @@
 import { Box, Stack, Typography, Button, IconButton } from "@mui/material";
 import { Add, PlayArrow } from "@mui/icons-material";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTrailer } from "@/hooks/useTrailer";
+import YoutubePlayer from "./YoutubePlayer";
 
 interface MovieCardProps {
   movie: {
@@ -23,6 +25,7 @@ interface MovieCardProps {
 
 export default function MovieCard({ movie }: MovieCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { trailer, getTrailer } = useTrailer();
   const router = useRouter();
 
   const title = movie.title || movie.name || "Untitled";
@@ -35,6 +38,12 @@ export default function MovieCard({ movie }: MovieCardProps) {
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : "/placeholder.jpg";
   const isPerson = !!movie.known_for_department;
+
+  useEffect(() => {
+    if (isHovered && !isPerson) {
+      getTrailer(movie.id, movie.first_air_date ? "tv" : "movie");
+    }
+  }, [getTrailer, isHovered, movie.id, movie.first_air_date, isPerson]);
 
   const handlePlay = () => {
     router.push(`/watch/${movie.id}`);
@@ -115,12 +124,16 @@ export default function MovieCard({ movie }: MovieCardProps) {
               </Box>
 
               <Box sx={{ width: "100%", height: "40%", position: "relative" }}>
+                {trailer ? (
+                  <YoutubePlayer id={trailer} />
+                ) : (
                 <Image
                   src={imageUrl}
                   alt={title}
                   fill
                   style={{ objectFit: "cover" }}
                 />
+                )}
                 <Box
                   sx={{
                     height: "100%",
@@ -248,34 +261,17 @@ export default function MovieCard({ movie }: MovieCardProps) {
                         <IconButton
                           sx={{
                             color: "primary.main",
+                            bgcolor: "rgba(0, 0, 0, 0.5)",
+                            border: "2px solid",
+                            borderColor: "primary.main",
                             "&:hover": {
-                              bgcolor: "rgba(255, 255, 255, 0.1)",
-                            },
-                            "&:hover + .watch-later-text": {
-                              opacity: 1,
+                              bgcolor: "rgba(0, 0, 0, 0.7)",
                             },
                           }}
                           onClick={handleAddToWatchLater}
                         >
-                          <Add
-                            sx={{ width: "2rem", height: "2rem", opacity: 0.4 }}
-                          />
+                          <Add />
                         </IconButton>
-                        <Typography
-                          className="watch-later-text"
-                          sx={{
-                            color: "primary.main",
-                            fontFamily: "NLight",
-                            fontSize: "0.7rem",
-                            opacity: 0,
-                            transition: "opacity 0.2s ease",
-                            position: "absolute",
-                            bottom: "-20px",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Watch Later
-                        </Typography>
                       </Box>
                     </Stack>
                   </Stack>

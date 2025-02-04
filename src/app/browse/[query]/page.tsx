@@ -62,7 +62,7 @@ const SkeletonGrid = () => {
             width="100%"
             height="30vw"
             animation="wave"
-            sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }}
+            sx={{ bgcolor: "rgba(255, 255, 255, 0.1)" }}
           />
         </Grid>
       ))}
