@@ -239,7 +239,6 @@ export default function NetHeader() {
           </Toolbar>
         </Container>
       </AppBar>
-      {!isDiscoverPage && <Toolbar />}
     </>
   );
 }

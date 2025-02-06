@@ -96,13 +96,16 @@ export default function YoutubePlayer({
         sx={{
           color: "white",
           position: "absolute",
-          right: "1rem",
-          bottom: "1rem",
+          right: { xs: "1.5rem", md: "2rem" },
+          bottom: { xs: "auto", md: "25%" },
+          top: { xs: "45%", md: "auto" },
           border: `${buttonSize === "small" ? 2 : 4}px solid`,
           borderColor: "white",
           opacity: 0.6,
           transition: "all .2s ease",
-          zIndex: 2,
+          zIndex: 10,
+          transform: { xs: "scale(0.8)", md: "scale(1)" },
+          padding: { xs: "8px", md: "12px" },
           "&:hover": {
             opacity: 1,
           },
@@ -111,15 +114,15 @@ export default function YoutubePlayer({
         {isMuted ? (
           <VolumeMute
             sx={{
-              width: buttonSize === "small" ? "1rem" : "2rem",
-              height: buttonSize === "small" ? "1rem" : "2rem",
+              width: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
+              height: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
             }}
           />
         ) : (
           <VolumeUp
             sx={{
-              width: buttonSize === "small" ? "1rem" : "2rem",
-              height: buttonSize === "small" ? "1rem" : "2rem",
+              width: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
+              height: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
             }}
           />
         )}

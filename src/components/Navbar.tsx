@@ -58,7 +58,13 @@ export default function Navbar() {
             },
           }}
         >
-          <Toolbar disableGutters>
+          <Toolbar
+            disableGutters
+            sx={{
+              minHeight: { xs: "64px", md: "70px" },
+              padding: 0,
+            }}
+          >
             {/* Logo - Desktop */}
             <Box
               sx={{

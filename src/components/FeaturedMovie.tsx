@@ -42,7 +42,8 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
         height: "100vh",
         position: "relative",
         overflow: "hidden",
-        mt: { xs: "-64px", md: "-70px" },
+        zIndex: 0,
+        marginBottom: "2rem",
       }}
     >
       <Box
@@ -50,16 +51,25 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
           width: "100%",
           height: "100%",
           position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           zIndex: -1,
           bgcolor: "black",
+          display: { xs: "none", md: "block" },
         }}
       />
       {trailer ? (
         <Box
           sx={{
-            width: "100%",
+            width: "calc(100%)",
             height: "100vh",
-            position: "relative",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             "& iframe": {
               width: "100%",
               height: "100%",
@@ -67,7 +77,7 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
               top: 0,
               left: 0,
               transform: {
-                xs: "scale(1.2)",
+                xs: "scale(1.3)",
                 md: "scale(1.5)",
               },
             },
@@ -118,48 +128,73 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
       <Stack
         sx={{
           position: "absolute",
-          bottom: { xs: "25%", md: "25%" },
+          bottom: { xs: "25%", md: "20%" },
           left: { xs: "50%", md: "5%" },
           transform: { xs: "translate(-50%, 0)", md: "translate(0, 0)" },
           zIndex: 2,
-          maxWidth: { xs: "90%", md: "40%" },
+          maxWidth: { xs: "90%", md: "80%" },
           width: { xs: "100%", md: "auto" },
           alignItems: { xs: "center", md: "flex-start" },
-          gap: { xs: "2rem", md: "1rem" },
+          gap: { xs: "2rem", md: "2rem" },
         }}
       >
-        <Stack
-          spacing={2}
-          alignItems={{ xs: "center", md: "flex-start" }}
-          width="100%"
+        <Typography
+          variant="h1"
+          sx={{
+            color: "white",
+            textTransform: "capitalize",
+            fontSize: { xs: "1.8rem", md: "4rem" },
+            fontWeight: "bold",
+            textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+            lineHeight: { xs: 1.2, md: 1 },
+            textAlign: { xs: "center", md: "left" },
+            maxWidth: { md: "100%" },
+          }}
         >
-          <Typography
-            variant="h1"
+          {movie.title}
+        </Typography>
+
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          sx={{
+            color: "white",
+            fontSize: { xs: "0.9rem", md: "1.1rem" },
+            opacity: 0.9,
+            textShadow: "1px 1px 2px rgba(0,0,0,0.5)",
+          }}
+        >
+          <Typography>{new Date(movie.release_date).getFullYear()}</Typography>
+          <Box
             sx={{
-              color: "white",
-              textTransform: "capitalize",
-              fontSize: { xs: "1.8rem", md: "3.5rem" },
-              fontWeight: "bold",
-              textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-              lineHeight: 1.2,
-              textAlign: { xs: "center", md: "left" },
-              mb: { xs: 2, md: 0 },
+              width: "4px",
+              height: "4px",
+              bgcolor: "white",
+              borderRadius: "50%",
             }}
-          >
-            {movie.title}
+          />
+          <Typography>
+            {movie.genres
+              ?.slice(0, 3)
+              .map((genre: any) => genre.name)
+              .join(", ")}
           </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: "white",
-              fontSize: { xs: "0.9rem", md: "1.2rem" },
-              textShadow: "1px 1px 3px rgba(0,0,0,0.7)",
-              textAlign: { xs: "center", md: "left" },
-              display: { xs: "none", md: "block" },
-            }}
-          >
-            {movie.overview}
-          </Typography>
+          {movie.vote_average > 0 && (
+            <>
+              <Box
+                sx={{
+                  width: "4px",
+                  height: "4px",
+                  bgcolor: "white",
+                  borderRadius: "50%",
+                }}
+              />
+              <Typography>
+                {Math.round(movie.vote_average * 10)}% Match
+              </Typography>
+            </>
+          )}
         </Stack>
 
         <Stack
@@ -167,9 +202,6 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
           spacing={2}
           alignItems="center"
           justifyContent={{ xs: "center", md: "flex-start" }}
-          sx={{
-            mt: { xs: 4, md: 0 },
-          }}
         >
           <Button
             onClick={handlePlay}
