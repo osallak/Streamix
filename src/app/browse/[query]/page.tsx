@@ -1,7 +1,6 @@
 "use client";
 
-import { Container, Skeleton, Toolbar, Box } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Container, Skeleton, Toolbar, Box, Grid2 } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import NoDataFound from "@/components/NoDataFound";
@@ -55,9 +54,9 @@ const SkeletonGrid = () => {
   const skeletonMovies = Array.from(Array(20).keys());
 
   return (
-    <Grid2 container spacing={2} sx={{ px: 2 }}>
+    <Grid2 container component="div" spacing={2} sx={{ px: 2 }}>
       {skeletonMovies.map((_, index) => (
-        <Grid2 item xs={12} sm={4} md={3} lg={2.4} key={index}>
+        <Grid2 component="div" size={{xs: 12, sm: 6, md: 4, lg: 3}} key={index}>
           <Skeleton
             variant="rectangular"
             width="100%"
@@ -73,9 +72,9 @@ const SkeletonGrid = () => {
 
 const CardsGrid = ({ movies }: { movies: Movie[] }) => {
   return (
-    <Grid2 container spacing={2} sx={{ px: 2 }}>
+    <Grid2 container component="div" spacing={2} sx={{ px: 2 }}>
       {movies.map((movie, index) => (
-        <Grid2 item xs={12} sm={4} md={3} lg={2.4} key={index}>
+        <Grid2 component="div"  key={index}>
           <MovieCard movie={movie} />
         </Grid2>
       ))}
