@@ -42,6 +42,7 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
         height: "100vh",
         position: "relative",
         overflow: "hidden",
+        mt: { xs: "-64px", md: "-70px" },
       }}
     >
       <Box
@@ -63,9 +64,12 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
               width: "100%",
               height: "100%",
               position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%) scale(1.5)",
+              top: 0,
+              left: 0,
+              transform: {
+                xs: "scale(1.2)",
+                md: "scale(1.5)",
+              },
             },
           }}
         >

@@ -6,7 +6,6 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   IconButton,
   Menu as MuiMenu,
   MenuItem,
@@ -19,8 +18,8 @@ import { useRouter, usePathname } from "next/navigation";
 
 const pages = [
   { label: "Home", path: "/" },
-  { label: "Movies", path: "/discover/movies" },
-  { label: "TV Shows", path: "/discover/series" },
+  { label: "Movies", path: "/movies" },
+  { label: "TV Shows", path: "/series" },
   { label: "Watch Later", path: "/watchLater" },
 ];
 
@@ -149,26 +148,6 @@ export default function Navbar() {
                   },
                 }}
               >
-                <Box
-                  sx={{
-                    flexGrow: { xs: 1, md: 0 },
-                    display: { xs: "block", sm: "none" },
-                  }}
-                >
-                  <Box onClick={() => router.push("/")} sx={{ px: 5, my: 2 }}>
-                    <Typography
-                      sx={{
-                        color: "secondary.main",
-                        fontFamily: "Inter",
-                        fontWeight: 700,
-                        fontSize: "1.5rem",
-                      }}
-                    >
-                      STREAMIX
-                    </Typography>
-                  </Box>
-                  <Divider sx={{ bgcolor: "black.light" }} />
-                </Box>
                 {pages.map((page) => (
                   <MenuItem
                     key={page.label}
@@ -214,7 +193,6 @@ export default function Navbar() {
           </Toolbar>
         </Container>
       </AppBar>
-      {!isDiscoverPage && <Toolbar />}
     </>
   );
 }

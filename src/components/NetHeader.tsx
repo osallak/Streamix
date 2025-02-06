@@ -22,8 +22,8 @@ import { useSearch } from "@/context/SearchContext";
 
 const pages = [
   { label: "Home", path: "/" },
-  { label: "Movies", path: "/discover/movies" },
-  { label: "TV Shows", path: "/discover/series" },
+  { label: "Movies", path: "/movies" },
+  { label: "TV Shows", path: "/series" },
   { label: "Watch Later", path: "/watchLater" },
 ];
 
