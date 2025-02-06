@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { InfoOutlined, PlayArrowRounded } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
@@ -5,6 +7,7 @@ import { Movie } from "@/types/movie";
 import { useTrailer } from "@/hooks/useTrailer";
 import { useEffect } from "react";
 import YoutubePlayer from "./YoutubePlayer";
+import { useInfoModal } from "@/context/InfoModalContext";
 
 interface FeaturedMovieProps {
   movie: Movie;
@@ -13,6 +16,7 @@ interface FeaturedMovieProps {
 export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
   const router = useRouter();
   const { trailer, getTrailer } = useTrailer();
+  const { setInfoMovie } = useInfoModal();
 
   useEffect(() => {
     const fetchTrailer = async () => {
@@ -28,7 +32,7 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
   };
 
   const handleMoreInfo = () => {
-    // TODO: Implement movie info modal
+    setInfoMovie(movie);
   };
 
   return (
@@ -110,24 +114,32 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
       <Stack
         sx={{
           position: "absolute",
-          bottom: { xs: "20%", md: "25%" },
+          bottom: { xs: "25%", md: "25%" },
           left: { xs: "50%", md: "5%" },
           transform: { xs: "translate(-50%, 0)", md: "translate(0, 0)" },
           zIndex: 2,
           maxWidth: { xs: "90%", md: "40%" },
+          width: { xs: "100%", md: "auto" },
+          alignItems: { xs: "center", md: "flex-start" },
+          gap: { xs: "2rem", md: "1rem" },
         }}
-        spacing={3}
       >
-        <Stack spacing={2}>
+        <Stack
+          spacing={2}
+          alignItems={{ xs: "center", md: "flex-start" }}
+          width="100%"
+        >
           <Typography
             variant="h1"
             sx={{
               color: "white",
               textTransform: "capitalize",
-              fontSize: { xs: "2rem", md: "3.5rem" },
+              fontSize: { xs: "1.8rem", md: "3.5rem" },
               fontWeight: "bold",
               textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
               lineHeight: 1.2,
+              textAlign: { xs: "center", md: "left" },
+              mb: { xs: 2, md: 0 },
             }}
           >
             {movie.title}
@@ -136,29 +148,49 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
             variant="body1"
             sx={{
               color: "white",
-              fontSize: { xs: "1rem", md: "1.2rem" },
+              fontSize: { xs: "0.9rem", md: "1.2rem" },
               textShadow: "1px 1px 3px rgba(0,0,0,0.7)",
+              textAlign: { xs: "center", md: "left" },
               display: { xs: "none", md: "block" },
             }}
           >
             {movie.overview}
           </Typography>
         </Stack>
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+
+        <Stack
+          direction={{ xs: "row", md: "row" }}
+          spacing={2}
+          alignItems="center"
+          justifyContent={{ xs: "center", md: "flex-start" }}
+          sx={{
+            mt: { xs: 4, md: 0 },
+          }}
+        >
           <Button
             onClick={handlePlay}
             variant="contained"
             startIcon={
-              <PlayArrowRounded sx={{ width: "2.5rem", height: "2.5rem" }} />
+              <PlayArrowRounded
+                sx={{
+                  width: { xs: "1.5rem", md: "2rem" },
+                  height: { xs: "1.5rem", md: "2rem" },
+                }}
+              />
             }
             sx={{
-              px: 4,
-              py: 1,
+              px: { xs: 3, md: 4 },
+              py: 0,
               textTransform: "capitalize",
-              fontSize: "1.2rem",
+              fontSize: { xs: "1rem", md: "1.2rem" },
               fontWeight: "bold",
               bgcolor: "white",
               color: "black",
+              minWidth: "auto",
+              height: { xs: "2.5rem", md: "3rem" },
+              lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
               "&:hover": {
                 bgcolor: "rgba(255,255,255,0.75)",
               },
@@ -168,14 +200,27 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
           </Button>
           <Button
             onClick={handleMoreInfo}
-            startIcon={<InfoOutlined sx={{ width: "2rem", height: "2rem" }} />}
+            startIcon={
+              <InfoOutlined
+                sx={{
+                  width: { xs: "1.5rem", md: "2rem" },
+                  height: { xs: "1.5rem", md: "2rem" },
+                }}
+              />
+            }
             sx={{
-              px: 4,
-              py: 1,
+              px: { xs: 3, md: 4 },
+              py: 0,
               textTransform: "capitalize",
-              fontSize: "1.2rem",
+              fontSize: { xs: "1rem", md: "1.2rem" },
+              fontWeight: "bold",
               bgcolor: "rgba(109, 109, 110, 0.7)",
               color: "white",
+              minWidth: "auto",
+              height: { xs: "2.5rem", md: "3rem" },
+              lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
               "&:hover": {
                 bgcolor: "rgba(109, 109, 110, 0.9)",
               },
@@ -194,6 +239,7 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
           left: 0,
           right: 0,
           height: "70%",
+
           background:
             "linear-gradient(180deg, transparent 0%, rgba(20,20,20,0.8) 50%, rgba(20,20,20,1) 100%)",
           zIndex: 1,

@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { ClientLayout } from "@/components/ClientLayout";
+import ClientWrapper from "@/components/ClientWrapper";
+import { metadata } from "./metadata";
 
-export const metadata: Metadata = {
-  title: "Netflix Clone",
-  description: "A Netflix clone built with Next.js and Tailwind CSS",
-};
+const inter = Inter({ subsets: ["latin"] });
+
+export { metadata };
 
 export default function RootLayout({
   children,
@@ -14,8 +14,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <ClientLayout>{children}</ClientLayout>
+      <body className={inter.className}>
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   );

@@ -18,13 +18,8 @@ import { useTrailer } from "@/hooks/useTrailer";
 import { useSimilarMovies } from "@/hooks/useSimilarMovies";
 import YoutubePlayer from "./YoutubePlayer";
 import MovieCard from "./MovieCard";
-import { Movie } from "@/types/movie";
+import { useInfoModal } from "@/context/InfoModalContext";
 import Image from "next/image";
-
-interface InfoModalProps {
-  movie: Movie | null;
-  onClose: () => void;
-}
 
 const style = {
   position: "absolute",
@@ -40,7 +35,8 @@ const style = {
   overflow: "hidden",
 };
 
-export default function InfoModal({ movie, onClose }: InfoModalProps) {
+export default function InfoModal() {
+  const { infoMovie: movie, setInfoMovie } = useInfoModal();
   const { trailer, getTrailer } = useTrailer();
   const { similarMovies, fetchSimilarMovies } = useSimilarMovies();
   const router = useRouter();
@@ -55,7 +51,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
   const handlePlay = () => {
     if (movie?.id) {
       router.push(`/watch/${movie.id}`);
-      onClose();
+      setInfoMovie(null);
     }
   };
 
@@ -67,7 +63,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
   return (
     <Modal
       open={!!movie}
-      onClose={onClose}
+      onClose={() => setInfoMovie(null)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -85,7 +81,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
         >
           <Box sx={{ width: "100%", height: "80vh", position: "relative" }}>
             <IconButton
-              onClick={onClose}
+              onClick={() => setInfoMovie(null)}
               sx={{ position: "absolute", top: 0, right: 0, zIndex: 99 }}
             >
               <Close sx={{ color: "white" }} />
@@ -204,7 +200,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
             {/* Movie Details and Similar Movies */}
             <Stack
               sx={{
-                px: "5%",
+                px: 2,
                 mt: 4,
                 width: "100%",
                 display: { xs: "none", md: "flex" },
@@ -241,7 +237,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                   </Typography>
                 </Stack>
 
-                <Stack>
+                <Stack sx={{ mr: 1 }}>
                   <Typography
                     sx={{
                       color: "white",
@@ -289,17 +285,21 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
               </Typography>
 
               <Box sx={{ mt: 2, pb: 4 }}>
-                <Grid2 container spacing={1}>
+                <Grid2
+                  container
+                  sx={{
+                    justifyContent: { xs: "center", md: "flex-start" },
+                  }}
+                >
                   {similarMovies?.slice(0, 12).map((similarMovie) => (
                     <Grid2
                       sx={{
                         width: {
-                          xs: "50%",
-                          sm: "33.333%",
-                          md: "25%",
-                          lg: "20%",
-                          xl: "16.666%",
+                          xs: "45%",
+                          sm: "33.33333%",
+                          md: "20%",
                         },
+                        p: 1,
                       }}
                       key={similarMovie.id}
                     >
@@ -316,18 +316,19 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
             <Stack
               sx={{
                 display: { xs: "flex", md: "none" },
-                px: "5%",
+                px: 2,
                 position: "relative",
-                mt: 4,
+                mt: 2,
                 width: "100%",
-                pb: 4,
+                pb: 2,
               }}
-              spacing={2}
+              spacing={1.5}
             >
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 justifyContent="space-between"
                 alignItems={{ xs: "start", sm: "center" }}
+                spacing={1}
               >
                 <Stack direction="row" spacing={1} alignItems="center">
                   {isNewMovie && (
@@ -335,7 +336,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                       sx={{
                         color: "#46d369",
                         fontFamily: "NBOLD",
-                        fontSize: "clamp(16px, 4vw, 1rem)",
+                        fontSize: "0.9rem",
                       }}
                     >
                       NEW
@@ -345,7 +346,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                     sx={{
                       color: "white",
                       fontFamily: "NBOLD",
-                      fontSize: "clamp(16px, 4vw, 1rem)",
+                      fontSize: "0.9rem",
                     }}
                     variant="caption"
                     component="span"
@@ -354,11 +355,11 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                   </Typography>
                 </Stack>
 
-                <Stack>
+                <Stack sx={{ mr: -4 }}>
                   <Typography
                     sx={{
                       color: "white",
-                      fontSize: ".7rem",
+                      fontSize: "0.7rem",
                       fontFamily: "NLight",
                     }}
                     variant="caption"
@@ -370,7 +371,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                     sx={{
                       color: "#e50914",
                       fontFamily: "NBOLD",
-                      fontSize: "clamp(16px, 4vw, 1rem)",
+                      fontSize: "0.9rem",
                     }}
                     variant="caption"
                     component="span"
@@ -384,7 +385,13 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                 sx={{
                   color: "white",
                   fontFamily: "NLight",
-                  fontSize: "clamp(16px, 4vw, 1rem)",
+                  fontSize: "0.9rem",
+                  maxHeight: "100px",
+                  overflow: "hidden",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 4,
+                  WebkitBoxOrient: "vertical",
+                  textOverflow: "ellipsis",
                 }}
               >
                 {movie?.overview}
@@ -394,14 +401,18 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                 variant="contained"
                 onClick={handlePlay}
                 startIcon={
-                  <PlayArrowRounded sx={{ width: "2rem", height: "2rem" }} />
+                  <PlayArrowRounded
+                    sx={{ width: "1.5rem", height: "1.5rem" }}
+                  />
                 }
                 sx={{
                   bgcolor: "white",
                   color: "black",
                   alignSelf: "flex-start",
-                  px: 4,
+                  px: 3,
+                  py: 0.5,
                   fontFamily: "NBOLD",
+                  fontSize: "0.9rem",
                   display: { xs: "flex", sm: "none" },
                   "&:hover": {
                     bgcolor: "rgba(255,255,255,0.75)",
@@ -415,26 +426,29 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                 sx={{
                   color: "white",
                   fontFamily: "NBOLD",
-                  fontSize: "1.2rem",
-                  mt: 2,
+                  fontSize: "1rem",
+                  mt: 1,
                 }}
               >
                 Similar Movies:
               </Typography>
 
-              <Box sx={{ mt: 2, pb: 4 }}>
-                <Grid2 container spacing={1}>
-                  {similarMovies?.slice(0, 12).map((similarMovie) => (
+              <Box sx={{ mt: 1, pb: 2 }}>
+                <Grid2
+                  container
+                  spacing={1}
+                  sx={{
+                    justifyContent: { xs: "center", md: "flex-start" },
+                  }}
+                >
+                  {similarMovies?.slice(0, 6).map((similarMovie) => (
                     <Grid2
-                      columnSpacing={1}
                       sx={{
                         width: {
-                          xs: "50%",
-                          sm: "33.333%",
-                          md: "25%",
-                          lg: "20%",
-                          xl: "16.666%",
+                          xs: "45%",
+                          sm: "33.33333%",
                         },
+                        p: 0.5,
                       }}
                       key={similarMovie.id}
                     >
@@ -444,7 +458,7 @@ export default function InfoModal({ movie, onClose }: InfoModalProps) {
                 </Grid2>
               </Box>
 
-              <Toolbar />
+              <Toolbar sx={{ minHeight: { xs: "48px" } }} />
             </Stack>
           </Box>
         </Stack>

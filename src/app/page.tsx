@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Button,
-  Container,
-  Stack,
-  Typography,
-  Toolbar,
-  IconButton,
-} from "@mui/material";
-import { Movie, Tv } from "@mui/icons-material";
+import { Button, Container, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useSearch } from "@/context/SearchContext";
 import { StyledTextField } from "@/components/StyledTextField";
@@ -33,74 +25,35 @@ export default function Home(): ReactElement {
     router.push(`/browse/${query}`);
   };
 
-  const handleMoviesClick = () => {
-    router.push("/movies");
-  };
-
-  const handleTvClick = () => {
-    router.push("/series");
-  };
-
   return (
     <Container
       maxWidth={false}
+      disableGutters
       sx={{
-        minHeight: "100vh",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         background:
           "linear-gradient(rgba(0, 0, 0, .8),rgba(0, 0, 0, .4), rgba(0, 0, 0, .8)), url(/assets/imgs/bg.jpg)",
         backgroundSize: "cover",
+        backgroundPosition: "center",
         display: "flex",
-        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
       }}
     >
-      <Toolbar disableGutters>
-        <Stack
-          direction="row"
-          py={4}
-          px={2}
-          justifyContent="space-between"
-          sx={{ width: "100%" }}
-        >
-          <Typography
-            onClick={() => router.push("/")}
-            sx={{
-              color: "secondary.main",
-              fontFamily: "Inter",
-              fontWeight: 700,
-              fontSize: { xs: "1.5rem", sm: "2rem" },
-              cursor: "pointer",
-              letterSpacing: "1px",
-            }}
-          >
-            STREAMIX
-          </Typography>
-          <Stack direction="row" spacing={{ xs: 0.5, sm: 2 }}>
-            <IconButton color="secondary" onClick={handleMoviesClick}>
-              <Movie
-                sx={{
-                  width: { xs: "1.5rem", sm: "2rem" },
-                  height: { xs: "1.5rem", sm: "2rem" },
-                }}
-              />
-            </IconButton>
-            <IconButton color="secondary" onClick={handleTvClick}>
-              <Tv
-                sx={{
-                  width: { xs: "1.5rem", sm: "2rem" },
-                  height: { xs: "1.5rem", sm: "2rem" },
-                }}
-              />
-            </IconButton>
-          </Stack>
-        </Stack>
-      </Toolbar>
-
       <Stack
         direction="column"
         width="100%"
-        sx={{ flexGrow: 1 }}
-        justifyContent="center"
         alignItems="center"
+        spacing={2}
+        sx={{
+          mt: "64px", // Account for navbar height
+          px: 2, // Add some horizontal padding
+        }}
       >
         <Typography
           component="h1"
@@ -134,7 +87,6 @@ export default function Home(): ReactElement {
           variant="caption"
           sx={{
             textAlign: "center",
-            marginTop: "12px",
             fontFamily: "Inter",
             fontWeight: 400,
             color: "primary.main",
@@ -147,7 +99,6 @@ export default function Home(): ReactElement {
           variant="caption"
           sx={{
             textAlign: "center",
-            marginTop: "12px",
             fontFamily: "Inter",
             fontWeight: 400,
             color: "primary.main",
@@ -158,7 +109,6 @@ export default function Home(): ReactElement {
         </Typography>
         <Stack
           direction={{ xs: "column", md: "row" }}
-          mt="16px"
           spacing={{ xs: 2, md: 0 }}
           sx={{ width: "100%" }}
           justifyContent="center"
@@ -195,7 +145,6 @@ export default function Home(): ReactElement {
             variant="caption"
             sx={{
               color: "warning.light",
-              mt: 2,
               fontFamily: "Inter",
               fontWeight: 400,
             }}

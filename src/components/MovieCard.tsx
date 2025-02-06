@@ -14,15 +14,18 @@ import { useRouter } from "next/navigation";
 import { useTrailer } from "@/hooks/useTrailer";
 import YoutubePlayer from "./YoutubePlayer";
 import { Movie } from "@/types/movie";
+import { useInfoModal } from "@/context/InfoModalContext";
 
 interface MovieCardProps {
   movie: Movie;
+  inModal?: boolean;
 }
 
-export default function MovieCard({ movie }: MovieCardProps) {
+export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const { trailer, getTrailer } = useTrailer();
   const router = useRouter();
+  const { setInfoMovie } = useInfoModal();
 
   useEffect(() => {
     if (isHovered && movie?.id) {
@@ -46,7 +49,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
   };
 
   const handleMoreInfo = () => {
-    // TODO: Implement movie info modal
+    setInfoMovie(movie);
   };
 
   return (
@@ -65,7 +68,8 @@ export default function MovieCard({ movie }: MovieCardProps) {
           height: "100%",
           zIndex: 0,
           transition: "all .5s ease",
-          ...(isHovered && { transform: "scale(1.08)", zIndex: 99 }),
+          ...(isHovered &&
+            !inModal && { transform: "scale(1.08)", zIndex: 99 }),
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -220,18 +224,20 @@ export default function MovieCard({ movie }: MovieCardProps) {
                   >
                     Play
                   </Button>
-                  <IconButton
-                    size="small"
-                    onClick={handleMoreInfo}
-                    sx={{
-                      color: "white",
-                      "&:hover": {
-                        bgcolor: "rgba(255,255,255,0.1)",
-                      },
-                    }}
-                  >
-                    <Info sx={{ fontSize: "2rem", opacity: 0.4 }} />
-                  </IconButton>
+                  {!inModal && (
+                    <IconButton
+                      size="small"
+                      onClick={handleMoreInfo}
+                      sx={{
+                        color: "white",
+                        "&:hover": {
+                          bgcolor: "rgba(255,255,255,0.1)",
+                        },
+                      }}
+                    >
+                      <Info sx={{ fontSize: "2rem", opacity: 0.4 }} />
+                    </IconButton>
+                  )}
                 </Stack>
               </Stack>
             </Stack>
