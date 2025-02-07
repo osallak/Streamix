@@ -120,6 +120,12 @@ export default function Home(): ReactElement {
             onChange={handleSearchChange}
             onKeyDown={handleEnterKey}
             value={query}
+            sx={{
+              width: {
+                xs: "clamp(250px, 70vw, 600px)",
+                sm: "clamp(250px, 60vw, 600px)",
+              },
+            }}
           />
           <Button
             color="error"

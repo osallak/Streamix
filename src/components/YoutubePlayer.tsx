@@ -114,15 +114,27 @@ export default function YoutubePlayer({
         {isMuted ? (
           <VolumeMute
             sx={{
-              width: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
-              height: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
+              width: {
+                xs: buttonSize === "small" ? "1rem" : "2rem",
+                md: "2.5rem",
+              },
+              height: {
+                xs: buttonSize === "small" ? "1rem" : "2rem",
+                md: "2.5rem",
+              },
             }}
           />
         ) : (
           <VolumeUp
             sx={{
-              width: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
-              height: { xs: buttonSize === "small" ? "1rem" : "2rem", md: "2.5rem" },
+              width: {
+                xs: buttonSize === "small" ? "1rem" : "2rem",
+                md: "2.5rem",
+              },
+              height: {
+                xs: buttonSize === "small" ? "1rem" : "2rem",
+                md: "2.5rem",
+              },
             }}
           />
         )}
