@@ -36,7 +36,7 @@ export default function SearchListScreen() {
   return (
     <Box sx={{ bgcolor: "#141414", minHeight: "100vh" }}>
       <NetHeader />
-      <Container disableGutters sx={{ pt: 2, pb: 4 }}>
+      <Container maxWidth={false} sx={{ pt: 2, pb: 4 }}>
         <Toolbar />
         {loading ? (
           <SkeletonGrid />
@@ -54,9 +54,9 @@ const SkeletonGrid = () => {
   const skeletonMovies = Array.from(Array(20).keys());
 
   return (
-    <Grid2 container component="div" spacing={2} sx={{ px: 2 }}>
+    <Grid2 container spacing={1} rowSpacing={4}>
       {skeletonMovies.map((_, index) => (
-        <Grid2 component="div" size={{xs: 12, sm: 6, md: 4, lg: 3}} key={index}>
+        <Grid2 size={{ xs: 12, sm: 4, md: 3, lg: 2.4 }} key={index}>
           <Skeleton
             variant="rectangular"
             width="100%"
@@ -72,9 +72,9 @@ const SkeletonGrid = () => {
 
 const CardsGrid = ({ movies }: { movies: Movie[] }) => {
   return (
-    <Grid2 container component="div" spacing={2} sx={{ px: 2 }}>
+    <Grid2 container spacing={1} rowSpacing={4}>
       {movies.map((movie, index) => (
-        <Grid2 component="div"  key={index}>
+        <Grid2 size={{ xs: 12, sm: 4, md: 3, lg: 2.4 }} key={index}>
           <MovieCard movie={movie} />
         </Grid2>
       ))}
