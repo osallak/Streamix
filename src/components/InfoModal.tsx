@@ -10,9 +10,8 @@ import {
   Container,
   Stack,
   Toolbar,
-  Grid2,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTrailer } from "@/hooks/useTrailer";
 import { useSimilarMovies } from "@/hooks/useSimilarMovies";
@@ -20,6 +19,9 @@ import YoutubePlayer from "./YoutubePlayer";
 import MovieCard from "./MovieCard";
 import { useInfoModal } from "@/context/InfoModalContext";
 import Image from "next/image";
+import SeriesEpisodes from "./SeriesEpisodes";
+import { getTitle } from "@/types/movie";
+import { TVShowDetails } from "@/types/tv";
 
 const style = {
   position: "absolute",
@@ -40,24 +42,42 @@ export default function InfoModal() {
   const { trailer, getTrailer } = useTrailer();
   const { similarMovies, fetchSimilarMovies } = useSimilarMovies();
   const router = useRouter();
+  const [showDetails, setShowDetails] = useState<TVShowDetails | null>(null);
 
   useEffect(() => {
     if (movie?.id) {
-      getTrailer(movie.id, "movie");
-      fetchSimilarMovies(movie.id);
+      getTrailer(movie.id, movie.media_type || "movie");
+      // Only fetch similar movies for movies, not TV shows
+      if (movie.media_type !== "tv") {
+        fetchSimilarMovies(movie.id);
+      }
+
+      if (movie.media_type === "tv") {
+        fetch(`/api/series/${movie.id}`)
+          .then((res) => res.json())
+          .then((data) => setShowDetails(data))
+          .catch(console.error);
+      }
     }
   }, [movie, getTrailer, fetchSimilarMovies]);
 
   const handlePlay = () => {
     if (movie?.id) {
-      router.push(`/watch/${movie.id}`);
+      if (movie.media_type === "tv") {
+        router.push(`/watch/${movie.id}/1-1`); // Default to season 1, episode 1
+      } else {
+        router.push(`/watch/${movie.id}`);
+      }
       setInfoMovie(null);
     }
   };
 
   if (!movie) return null;
 
-  const releaseYear = movie.release_date?.split("-")[0] || "no Date";
+  const releaseYear =
+    movie.release_date?.split("-")[0] ||
+    movie.first_air_date?.split("-")[0] ||
+    "no Date";
   const isNewMovie = releaseYear === new Date().getFullYear().toString();
 
   return (
@@ -82,7 +102,10 @@ export default function InfoModal() {
           <Box
             sx={{
               width: "100%",
-              height: { xs: "70vh", md: "80vh" },
+              height: {
+                xs: "70vh",
+                md: movie.media_type === "tv" ? "60vh" : "80vh",
+              },
               position: "relative",
             }}
           >
@@ -98,7 +121,7 @@ export default function InfoModal() {
               <Close sx={{ color: "white" }} />
             </IconButton>
 
-            {/* Movie Trailer/Image Section */}
+            {/* Movie/Show Trailer/Image Section */}
             <Box
               sx={{
                 width: "100%",
@@ -129,7 +152,7 @@ export default function InfoModal() {
                     src={`https://image.tmdb.org/t/p/original${
                       movie?.backdrop_path || movie?.poster_path
                     }`}
-                    alt={movie.title}
+                    alt={getTitle(movie)}
                     fill
                     style={{
                       objectFit: "cover",
@@ -177,7 +200,7 @@ export default function InfoModal() {
                         textTransform: "capitalize",
                       }}
                     >
-                      {movie.title}
+                      {getTitle(movie)}
                     </Typography>
                   </Stack>
                   <Typography
@@ -190,31 +213,30 @@ export default function InfoModal() {
                     variant="caption"
                     component="span"
                   >
-                    Movie
+                    {movie.media_type === "tv" ? "TV Show" : "Movie"}
                   </Typography>
                 </Stack>
 
                 <Button
-                  variant="contained"
                   onClick={handlePlay}
+                  variant="contained"
                   startIcon={
-                    <PlayArrowRounded
-                      sx={{
-                        width: { xs: "1.5rem", md: "2rem" },
-                        height: { xs: "1.5rem", md: "2rem" },
-                      }}
-                    />
+                    <PlayArrowRounded sx={{ width: "2rem", height: "2rem" }} />
                   }
                   sx={{
+                    alignSelf: "flex-start",
+                    px: 4,
+                    fontFamily: "NBOLD",
+                    textTransform: "capitalize",
+                    fontSize: "1.2rem",
                     bgcolor: "white",
                     color: "black",
-                    alignSelf: "flex-start",
-                    px: { xs: 2, md: 4 },
-                    py: { xs: 0.5, md: 1 },
+                    minWidth: "auto",
+                    height: "2.5rem",
+                    lineHeight: 1,
+                    display: { xs: "none", sm: "flex" },
+                    alignItems: "center",
                     zIndex: 4,
-                    fontFamily: "NBOLD",
-                    fontSize: { xs: "0.9rem", md: "1rem" },
-                    display: "flex",
                     "&:hover": {
                       bgcolor: "rgba(255,255,255,0.75)",
                     },
@@ -225,7 +247,7 @@ export default function InfoModal() {
               </Stack>
             </Box>
 
-            {/* Movie Details and Similar Movies */}
+            {/* Movie/Show Details and Similar Content */}
             <Stack
               sx={{
                 px: { xs: 1.5, md: 2 },
@@ -234,6 +256,34 @@ export default function InfoModal() {
               }}
               spacing={{ xs: 2, md: 3 }}
             >
+              {/* Mobile Play Button */}
+              <Button
+                onClick={handlePlay}
+                variant="contained"
+                startIcon={
+                  <PlayArrowRounded sx={{ width: "2rem", height: "2rem" }} />
+                }
+                sx={{
+                  alignSelf: "flex-start",
+                  px: 4,
+                  fontFamily: "NBOLD",
+                  textTransform: "capitalize",
+                  fontSize: "1.2rem",
+                  bgcolor: "white",
+                  color: "black",
+                  minWidth: "auto",
+                  height: "2.5rem",
+                  lineHeight: 1,
+                  display: { xs: "flex", sm: "none" },
+                  alignItems: "center",
+                  zIndex: 4,
+                  "&:hover": {
+                    bgcolor: "rgba(255,255,255,0.75)",
+                  },
+                }}
+              >
+                Play
+              </Button>
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 justifyContent="space-between"
@@ -249,45 +299,39 @@ export default function InfoModal() {
                         fontSize: { xs: "0.9rem", md: "1rem" },
                       }}
                     >
-                      NEW
+                      New
                     </Typography>
                   )}
                   <Typography
                     sx={{
                       color: "white",
-                      fontFamily: "NBOLD",
+                      fontFamily: "NLight",
                       fontSize: { xs: "0.9rem", md: "1rem" },
                     }}
-                    variant="caption"
-                    component="span"
                   >
                     {releaseYear}
                   </Typography>
-                </Stack>
-
-                <Stack sx={{ mr: { xs: 0, md: 1 } }}>
-                  <Typography
-                    sx={{
-                      color: "white",
-                      fontSize: { xs: "0.7rem", md: "0.8rem" },
-                      fontFamily: "NLight",
-                    }}
-                    variant="caption"
-                    component="span"
-                  >
-                    Votes:
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: "#e50914",
-                      fontFamily: "NBOLD",
-                      fontSize: { xs: "0.9rem", md: "1rem" },
-                    }}
-                    variant="caption"
-                    component="span"
-                  >
-                    {Math.round((movie?.vote_average || 0) * 10)}%
-                  </Typography>
+                  {movie.vote_average > 0 && (
+                    <>
+                      <Box
+                        sx={{
+                          width: "4px",
+                          height: "4px",
+                          bgcolor: "white",
+                          borderRadius: "50%",
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          color: "#46d369",
+                          fontFamily: "NBOLD",
+                          fontSize: { xs: "0.9rem", md: "1rem" },
+                        }}
+                      >
+                        {Math.round(movie.vote_average * 10)}% Match
+                      </Typography>
+                    </>
+                  )}
                 </Stack>
               </Stack>
 
@@ -296,55 +340,60 @@ export default function InfoModal() {
                   color: "white",
                   fontFamily: "NLight",
                   fontSize: { xs: "0.9rem", md: "1rem" },
-                  maxHeight: { xs: "100px", md: "none" },
-                  overflow: "hidden",
-                  display: { xs: "-webkit-box", md: "block" },
-                  WebkitLineClamp: { xs: 4, md: "none" },
-                  WebkitBoxOrient: "vertical",
-                  textOverflow: "ellipsis",
+                  opacity: 0.7,
                 }}
               >
-                {movie?.overview}
+                {movie.overview}
               </Typography>
 
-              <Typography
-                sx={{
-                  color: "white",
-                  fontFamily: "NBOLD",
-                  fontSize: { xs: "1rem", md: "1.2rem" },
-                  mt: { xs: 1, md: 2 },
-                }}
-              >
-                Similar Movies:
-              </Typography>
-
-              <Box sx={{ mt: { xs: 1, md: 2 }, pb: { xs: 2, md: 4 } }}>
-                <Grid2
-                  container
-                  spacing={{ xs: 1, md: 2 }}
-                  sx={{
-                    justifyContent: { xs: "center", md: "flex-start" },
+              {/* TV Show Episodes */}
+              {movie.media_type === "tv" && showDetails && (
+                <SeriesEpisodes
+                  show={{
+                    ...movie,
+                    ...showDetails,
+                    backdrop_path: showDetails.backdrop_path || undefined,
+                    poster_path: showDetails.poster_path || undefined,
+                    vote_count: movie.vote_count,
+                    popularity: movie.popularity,
+                    adult: movie.adult,
+                    genre_ids: movie.genre_ids,
+                    original_language: movie.original_language,
                   }}
-                >
-                  {similarMovies?.slice(0, 12).map((similarMovie) => (
-                    <Grid2
-                      sx={{
-                        width: {
-                          xs: "45%",
-                          sm: "33.33333%",
-                          md: "20%",
-                        },
-                        p: { xs: 0.5, md: 1 },
-                      }}
-                      key={similarMovie.id}
-                    >
-                      <MovieCard movie={similarMovie} inModal={true} />
-                    </Grid2>
-                  ))}
-                </Grid2>
-              </Box>
+                />
+              )}
 
-              <Toolbar sx={{ minHeight: { xs: "48px", md: "64px" } }} />
+              {/* Similar Content - Only for movies */}
+              {movie.media_type !== "tv" && similarMovies.length > 0 && (
+                <>
+                  <Typography
+                    sx={{
+                      color: "white",
+                      fontFamily: "NBOLD",
+                      fontSize: "1.5rem",
+                      mt: 4,
+                    }}
+                  >
+                    More Like This
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "repeat(2, 1fr)",
+                        sm: "repeat(3, 1fr)",
+                        md: "repeat(4, 1fr)",
+                      },
+                      gap: 2,
+                    }}
+                  >
+                    {similarMovies.map((movie) => (
+                      <MovieCard key={movie.id} movie={movie} inModal />
+                    ))}
+                  </Box>
+                </>
+              )}
+              <Toolbar />
             </Stack>
           </Box>
         </Stack>

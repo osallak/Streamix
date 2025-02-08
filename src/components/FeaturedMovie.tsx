@@ -3,7 +3,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { InfoOutlined, PlayArrowRounded } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import { Movie } from "@/types/movie";
+import { Movie, getTitle, getReleaseDate } from "@/types/movie";
 import { useTrailer } from "@/hooks/useTrailer";
 import { useEffect } from "react";
 import YoutubePlayer from "./YoutubePlayer";
@@ -21,14 +21,18 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
   useEffect(() => {
     const fetchTrailer = async () => {
       if (movie?.id) {
-        await getTrailer(movie.id, "movie");
+        await getTrailer(movie.id, movie.media_type || "movie");
       }
     };
     fetchTrailer();
   }, [movie, getTrailer]);
 
   const handlePlay = () => {
-    router.push(`/watch/${movie.id}`);
+    if (movie.media_type === "tv") {
+      router.push(`/watch/${movie.id}/1-1`); // Default to season 1, episode 1 for TV shows
+    } else {
+      router.push(`/watch/${movie.id}`);
+    }
   };
 
   const handleMoreInfo = () => {
@@ -110,7 +114,7 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
         >
           {movie?.backdrop_path || movie?.poster_path ? (
             <img
-              alt={movie.title}
+              alt={getTitle(movie)}
               src={`https://image.tmdb.org/t/p/original${
                 movie?.backdrop_path || movie?.poster_path
               }`}
@@ -151,7 +155,7 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
             maxWidth: { md: "100%" },
           }}
         >
-          {movie.title}
+          {getTitle(movie)}
         </Typography>
 
         <Stack
@@ -165,7 +169,9 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
             textShadow: "1px 1px 2px rgba(0,0,0,0.5)",
           }}
         >
-          <Typography>{new Date(movie.release_date).getFullYear()}</Typography>
+          <Typography>
+            {new Date(getReleaseDate(movie)).getFullYear()}
+          </Typography>
           <Box
             sx={{
               width: "4px",
@@ -207,23 +213,17 @@ export default function FeaturedMovie({ movie }: FeaturedMovieProps) {
             onClick={handlePlay}
             variant="contained"
             startIcon={
-              <PlayArrowRounded
-                sx={{
-                  width: { xs: "1.5rem", md: "2rem" },
-                  height: { xs: "1.5rem", md: "2rem" },
-                }}
-              />
+              <PlayArrowRounded sx={{ width: "2.5rem", height: "2.5rem" }} />
             }
             sx={{
-              px: { xs: 3, md: 4 },
-              py: 0,
+              px: 4,
+              fontFamily: "NBOLD",
               textTransform: "capitalize",
-              fontSize: { xs: "1rem", md: "1.2rem" },
-              fontWeight: "bold",
+              fontSize: "1.2rem",
               bgcolor: "white",
               color: "black",
               minWidth: "auto",
-              height: { xs: "2.5rem", md: "3rem" },
+              height: "3rem",
               lineHeight: 1,
               display: "flex",
               alignItems: "center",

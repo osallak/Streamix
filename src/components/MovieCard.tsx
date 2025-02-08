@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTrailer } from "@/hooks/useTrailer";
 import YoutubePlayer from "./YoutubePlayer";
-import { Movie } from "@/types/movie";
+import { Movie, getTitle, getReleaseDate } from "@/types/movie";
 import { useInfoModal } from "@/context/InfoModalContext";
 
 interface MovieCardProps {
@@ -29,7 +29,7 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
 
   useEffect(() => {
     if (isHovered && movie?.id) {
-      getTrailer(movie.id, "movie");
+      getTrailer(movie.id, movie.media_type || "movie");
     }
   }, [isHovered, movie, getTrailer]);
 
@@ -41,11 +41,15 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
     ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
     : imageUrl;
 
-  const title = movie?.title || "Unknown Title";
-  const releaseYear = movie.release_date?.split("-")[0] || "";
+  const title = getTitle(movie);
+  const releaseYear = getReleaseDate(movie)?.split("-")[0] || "";
 
   const handlePlayClick = () => {
-    router.push(`/watch/${movie.id}`);
+    if (movie.media_type === "tv") {
+      router.push(`/watch/${movie.id}/1-1`); // Default to season 1, episode 1 for TV shows
+    } else {
+      router.push(`/watch/${movie.id}`);
+    }
   };
 
   const handleMoreInfo = () => {
@@ -77,7 +81,7 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
         >
           <img
             src={imageUrl}
-            alt={title}
+            alt={`${getTitle(movie)} Poster`}
             style={{
               width: "100%",
               height: "100%",
@@ -161,7 +165,7 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                   ) : (
                     <img
                       src={backdropUrl}
-                      alt={title}
+                      alt={`${getTitle(movie)} Backdrop`}
                       style={{
                         width: "100%",
                         height: "100%",
@@ -191,7 +195,7 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                     height: { xs: "auto", sm: "60%" },
                   }}
                 >
-                  <Stack spacing={1}>
+                  <Stack spacing={1} sx={{ overflow: "hidden", flex: 1 }}>
                     <Stack
                       direction="row"
                       alignItems="center"
@@ -230,8 +234,35 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                         fontSize: "0.8rem",
                       }}
                     >
-                      movie
+                      {movie.media_type || "movie"}
                     </Typography>
+
+                    {/* Scrollable description */}
+                    <Box sx={{
+                      overflow: "auto",
+                      maxHeight: "100px",
+                      "&::-webkit-scrollbar": {
+                        width: "4px",
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        background: "rgba(255, 255, 255, 0.1)",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        background: "rgba(255, 255, 255, 0.3)",
+                        borderRadius: "2px",
+                      },
+                    }}>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          fontFamily: "NLight",
+                          fontSize: "0.8rem",
+                          opacity: 0.7,
+                        }}
+                      >
+                        {movie.overview}
+                      </Typography>
+                    </Box>
                   </Stack>
 
                   <Stack
@@ -242,6 +273,10 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                     sx={{
                       flexGrow: 0,
                       mt: 1,
+                      position: "sticky",
+                      bottom: 0,
+                      bgcolor: "#141414e0",
+                      pt: 1,
                     }}
                   >
                     <Button
@@ -252,9 +287,6 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                       sx={{
                         bgcolor: "white",
                         color: "black",
-                        textTransform: "none",
-                        fontFamily: "NBOLD",
-                        px: 4,
                         "&:hover": {
                           bgcolor: "rgba(255,255,255,0.75)",
                         },
@@ -262,20 +294,19 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                     >
                       Play
                     </Button>
-                    {!inModal && (
-                      <IconButton
-                        size="small"
-                        onClick={handleMoreInfo}
-                        sx={{
-                          color: "white",
-                          "&:hover": {
-                            bgcolor: "rgba(255,255,255,0.1)",
-                          },
-                        }}
-                      >
-                        <Info sx={{ fontSize: "2rem", opacity: 0.4 }} />
-                      </IconButton>
-                    )}
+                    <IconButton
+                      size="small"
+                      onClick={handleMoreInfo}
+                      sx={{
+                        bgcolor: "#6d6d6eb3",
+                        color: "white",
+                        "&:hover": {
+                          bgcolor: "#6d6d6e99",
+                        },
+                      }}
+                    >
+                      <Info />
+                    </IconButton>
                   </Stack>
                 </Stack>
               </Stack>
