@@ -54,15 +54,25 @@ const SkeletonGrid = () => {
   const skeletonMovies = Array.from(Array(20).keys());
 
   return (
-    <Grid2 container spacing={1} rowSpacing={4}>
+    <Grid2
+      container
+      spacing={{ xs: 2, sm: 1 }}
+      rowSpacing={{ xs: 6, sm: 4 }}
+      sx={{
+        px: { xs: 2, sm: 0 },
+      }}
+    >
       {skeletonMovies.map((_, index) => (
-        <Grid2 size={{ xs: 12, sm: 4, md: 3, lg: 2.4 }} key={index}>
+        <Grid2 size={{ xs: 6, sm: 4, md: 3, lg: 2.4 }} key={index}>
           <Skeleton
             variant="rectangular"
             width="100%"
-            height="30vw"
+            height="200px"
             animation="wave"
-            sx={{ bgcolor: "rgba(255, 255, 255, 0.1)" }}
+            sx={{
+              height: { xs: "200px", sm: "30vw" },
+              bgcolor: "rgba(255, 255, 255, 0.1)",
+            }}
           />
         </Grid2>
       ))}
@@ -72,9 +82,16 @@ const SkeletonGrid = () => {
 
 const CardsGrid = ({ movies }: { movies: Movie[] }) => {
   return (
-    <Grid2 container spacing={1} rowSpacing={4}>
+    <Grid2
+      container
+      spacing={{ xs: 2, sm: 1 }}
+      rowSpacing={{ xs: 6, sm: 4 }}
+      sx={{
+        px: { xs: 2, sm: 0 },
+      }}
+    >
       {movies.map((movie, index) => (
-        <Grid2 size={{ xs: 12, sm: 4, md: 3, lg: 2.4 }} key={index}>
+        <Grid2 size={{ xs: 6, sm: 4, md: 3, lg: 2.4 }} key={index}>
           <MovieCard movie={movie} />
         </Grid2>
       ))}

@@ -37,6 +37,7 @@ export default function NetHeader({ hideSearch = false }: NetHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const isDiscoverPage = pathname?.includes("/discover");
+  const isHomePage = pathname === "/";
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -81,8 +82,10 @@ export default function NetHeader({ hideSearch = false }: NetHeaderProps) {
             disableGutters
             sx={{
               minHeight: { xs: "64px", md: "70px" },
+              position: "relative",
             }}
           >
+            {/* Desktop Logo */}
             <Typography
               onClick={() => router.push("/")}
               sx={{
@@ -98,6 +101,27 @@ export default function NetHeader({ hideSearch = false }: NetHeaderProps) {
             >
               STREAMIX
             </Typography>
+
+            {/* Mobile Logo - Only on Home Page */}
+            {isHomePage && (
+              <Typography
+                onClick={() => router.push("/")}
+                sx={{
+                  display: { xs: "block", sm: "none" },
+                  color: "secondary.main",
+                  fontFamily: "Inter",
+                  fontWeight: 700,
+                  fontSize: "1.5rem",
+                  cursor: "pointer",
+                  letterSpacing: "1px",
+                  position: "absolute",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                }}
+              >
+                STREAMIX
+              </Typography>
+            )}
 
             <Stack
               sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
@@ -213,26 +237,31 @@ export default function NetHeader({ hideSearch = false }: NetHeaderProps) {
                   },
                 }}
               >
-                <Box
-                  sx={{
-                    flexGrow: { xs: 1, md: 0 },
-                    display: { xs: "block", sm: "none" },
-                  }}
-                >
-                  <Box onClick={() => router.push("/")} sx={{ px: 5, my: 2 }}>
-                    <Typography
-                      sx={{
-                        color: "secondary.main",
-                        fontFamily: "Inter",
-                        fontWeight: 700,
-                        fontSize: "1.5rem",
-                      }}
-                    >
-                      STREAMIX
-                    </Typography>
+                {/* Logo and Divider for non-home pages */}
+                {!isHomePage && (
+                  <Box
+                    sx={{
+                      flexGrow: { xs: 1, md: 0 },
+                      display: { xs: "block", sm: "none" },
+                    }}
+                  >
+                    <Box onClick={() => router.push("/")} sx={{ px: 5, my: 2 }}>
+                      <Typography
+                        sx={{
+                          color: "secondary.main",
+                          fontFamily: "Inter",
+                          fontWeight: 700,
+                          fontSize: "1.5rem",
+                        }}
+                      >
+                        STREAMIX
+                      </Typography>
+                    </Box>
+                    <Divider sx={{ bgcolor: "black.light" }} />
                   </Box>
-                  <Divider sx={{ bgcolor: "black.light" }} />
-                </Box>
+                )}
+
+                {/* Navigation Menu Items */}
                 {pages.map((page) => (
                   <MenuItem
                     key={page.label}

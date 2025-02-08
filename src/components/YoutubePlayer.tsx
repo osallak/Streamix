@@ -58,11 +58,19 @@ export default function YoutubePlayer({
   };
 
   const handleReady = (event: any) => {
-    if (autoPlay) {
-      event.target.playVideo();
+    if (autoPlay && event?.target) {
+      try {
+        event.target.playVideo();
+      } catch (error) {
+        console.error("Failed to play video:", error);
+      }
     }
-    if (muted) {
-      event.target.mute();
+    if (muted && event?.target) {
+      try {
+        event.target.mute();
+      } catch (error) {
+        console.error("Failed to mute video:", error);
+      }
     }
   };
 
@@ -96,16 +104,16 @@ export default function YoutubePlayer({
         sx={{
           color: "white",
           position: "absolute",
-          right: { xs: "1.5rem", md: "2rem" },
-          bottom: { xs: "auto", md: "25%" },
-          top: { xs: "45%", md: "auto" },
-          border: `${buttonSize === "small" ? 2 : 4}px solid`,
+          right: { xs: "1rem", md: "1.5rem" },
+          bottom: { xs: "10%", md: "20%" },
+          top: { xs: "auto", md: "auto" },
+          border: `${buttonSize === "small" ? 1 : 2}px solid`,
           borderColor: "white",
           opacity: 0.6,
           transition: "all .2s ease",
           zIndex: 10,
-          transform: { xs: "scale(0.8)", md: "scale(1)" },
-          padding: { xs: "8px", md: "12px" },
+          transform: { xs: "scale(0.7)", md: "scale(0.8)" },
+          padding: { xs: "4px", md: "6px" },
           "&:hover": {
             opacity: 1,
           },
@@ -115,12 +123,12 @@ export default function YoutubePlayer({
           <VolumeMute
             sx={{
               width: {
-                xs: buttonSize === "small" ? "1rem" : "2rem",
-                md: "2.5rem",
+                xs: buttonSize === "small" ? "0.8rem" : "1.2rem",
+                md: "1.5rem",
               },
               height: {
-                xs: buttonSize === "small" ? "1rem" : "2rem",
-                md: "2.5rem",
+                xs: buttonSize === "small" ? "0.8rem" : "1.2rem",
+                md: "1.5rem",
               },
             }}
           />
@@ -128,12 +136,12 @@ export default function YoutubePlayer({
           <VolumeUp
             sx={{
               width: {
-                xs: buttonSize === "small" ? "1rem" : "2rem",
-                md: "2.5rem",
+                xs: buttonSize === "small" ? "0.8rem" : "1.2rem",
+                md: "1.5rem",
               },
               height: {
-                xs: buttonSize === "small" ? "1rem" : "2rem",
-                md: "2.5rem",
+                xs: buttonSize === "small" ? "0.8rem" : "1.2rem",
+                md: "1.5rem",
               },
             }}
           />

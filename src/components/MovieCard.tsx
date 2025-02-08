@@ -61,107 +61,152 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
       lg={2.4}
       sx={{ display: "flex", cursor: "pointer" }}
     >
-      <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          zIndex: 0,
-          transition: "all .5s ease",
-          ...(isHovered &&
-            !inModal && { transform: "scale(1.08)", zIndex: 99 }),
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <img
-          src={imageUrl}
-          alt={title}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-
+      <Box sx={{ width: "100%" }}>
         <Box
           sx={{
-            opacity: 0,
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            zIndex: 0,
             transition: "all .5s ease",
-            ...(isHovered && { opacity: 1 }),
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
+            ...(isHovered &&
+              !inModal && { transform: "scale(1.08)", zIndex: 99 }),
           }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
-          {isHovered && (
-            <Stack
-              direction="column"
-              width="100%"
-              height="100%"
+          <img
+            src={imageUrl}
+            alt={title}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              aspectRatio: "2/3",
+            }}
+          />
+
+          {/* Mobile Title */}
+          <Box
+            sx={{
+              display: { xs: "block", sm: "none" },
+              height: "2.5rem",
+              mt: 1,
+              mb: 1,
+              px: 0.5,
+              position: "relative",
+            }}
+          >
+            <Typography
               sx={{
-                position: "absolute",
-                top: 0,
-                bgcolor: "#141414e0",
-                backdropFilter: "blur(2px)",
+                color: "white",
+                fontFamily: "NBOLD",
+                fontSize: "0.9rem",
+                lineHeight: 1.2,
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "40%",
-                  position: "relative",
-                }}
-              >
-                {trailer ? (
-                  <YoutubePlayer
-                    videoId={trailer}
-                    buttonSize="small"
-                    autoPlay={true}
-                    muted={true}
-                  />
-                ) : (
-                  <img
-                    src={backdropUrl}
-                    alt={title}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                )}
-                <Box
-                  sx={{
-                    height: "100%",
-                    background:
-                      "linear-gradient(transparent 50%, #141414 100%)",
-                    position: "absolute",
-                    bottom: 0,
-                    width: "100%",
-                  }}
-                />
-              </Box>
+              {title}
+            </Typography>
+          </Box>
 
+          <Box
+            sx={{
+              opacity: 0,
+              transition: "all .5s ease",
+              ...(isHovered && { opacity: 1 }),
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: "block",
+            }}
+            onClick={() => setIsHovered(!isHovered)}
+          >
+            {isHovered && (
               <Stack
-                height="60%"
+                direction="column"
+                width="100%"
+                height="100%"
                 sx={{
-                  p: 2,
+                  position: "absolute",
+                  top: 0,
+                  bgcolor: "#141414e0",
+                  backdropFilter: "blur(2px)",
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "space-between",
+                  justifyContent: { xs: "flex-end", sm: "flex-start" },
                 }}
               >
-                <Stack spacing={1}>
-                  <Stack>
-                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "40%",
+                    position: "relative",
+                    display: { xs: "none", sm: "block" },
+                  }}
+                >
+                  {trailer ? (
+                    <YoutubePlayer
+                      videoId={trailer}
+                      buttonSize="small"
+                      autoPlay={true}
+                      muted={true}
+                    />
+                  ) : (
+                    <img
+                      src={backdropUrl}
+                      alt={title}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
+                  <Box
+                    sx={{
+                      height: "100%",
+                      background:
+                        "linear-gradient(transparent 50%, #141414 100%)",
+                      position: "absolute",
+                      bottom: 0,
+                      width: "100%",
+                    }}
+                  />
+                </Box>
+
+                <Stack
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    gap: { xs: 2, sm: 1 },
+                    height: { xs: "auto", sm: "60%" },
+                  }}
+                >
+                  <Stack spacing={1}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={0.5}
+                      sx={{ maxWidth: "100%" }}
+                    >
                       <Typography
                         sx={{
                           color: "white",
                           fontFamily: "NBOLD",
                           fontSize: "1rem",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "80%",
                         }}
                       >
                         {title}
@@ -171,6 +216,7 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                           color: "white",
                           fontFamily: "NRegular",
                           fontSize: "0.8rem",
+                          flexShrink: 0,
                         }}
                       >
                         ({releaseYear})
@@ -188,60 +234,53 @@ export default function MovieCard({ movie, inModal = false }: MovieCardProps) {
                     </Typography>
                   </Stack>
 
-                  <Typography
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    justifyContent="space-between"
+                    alignItems="center"
                     sx={{
-                      color: "white",
-                      fontFamily: "NLight",
-                      fontSize: "0.8rem",
+                      flexGrow: 0,
+                      mt: 1,
                     }}
                   >
-                    {movie.overview?.slice(0, 60)}...
-                  </Typography>
-                </Stack>
-
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ flexGrow: 1 }}
-                >
-                  <Button
-                    variant="contained"
-                    size="small"
-                    onClick={handlePlayClick}
-                    startIcon={<PlayArrow />}
-                    sx={{
-                      bgcolor: "white",
-                      color: "black",
-                      textTransform: "none",
-                      fontFamily: "NBOLD",
-                      px: 4,
-                      "&:hover": {
-                        bgcolor: "rgba(255,255,255,0.75)",
-                      },
-                    }}
-                  >
-                    Play
-                  </Button>
-                  {!inModal && (
-                    <IconButton
+                    <Button
+                      variant="contained"
                       size="small"
-                      onClick={handleMoreInfo}
+                      onClick={handlePlayClick}
+                      startIcon={<PlayArrow />}
                       sx={{
-                        color: "white",
+                        bgcolor: "white",
+                        color: "black",
+                        textTransform: "none",
+                        fontFamily: "NBOLD",
+                        px: 4,
                         "&:hover": {
-                          bgcolor: "rgba(255,255,255,0.1)",
+                          bgcolor: "rgba(255,255,255,0.75)",
                         },
                       }}
                     >
-                      <Info sx={{ fontSize: "2rem", opacity: 0.4 }} />
-                    </IconButton>
-                  )}
+                      Play
+                    </Button>
+                    {!inModal && (
+                      <IconButton
+                        size="small"
+                        onClick={handleMoreInfo}
+                        sx={{
+                          color: "white",
+                          "&:hover": {
+                            bgcolor: "rgba(255,255,255,0.1)",
+                          },
+                        }}
+                      >
+                        <Info sx={{ fontSize: "2rem", opacity: 0.4 }} />
+                      </IconButton>
+                    )}
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          )}
+            )}
+          </Box>
         </Box>
       </Box>
     </Grid>
