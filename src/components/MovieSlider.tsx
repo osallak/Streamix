@@ -4,14 +4,20 @@ import { ChevronRight } from "@mui/icons-material";
 import { Box, Stack, Typography, IconButton } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import MovieCard from "./MovieCard";
+import { Movie } from "@/types/movie";
 
 interface MovieSliderProps {
   title: string;
   endpoint: string;
+  mediaType?: "movie" | "tv";
 }
 
-export default function MovieSlider({ title, endpoint }: MovieSliderProps) {
-  const [movies, setMovies] = useState([]);
+export default function MovieSlider({
+  title,
+  endpoint,
+  mediaType = "movie",
+}: MovieSliderProps) {
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -21,7 +27,11 @@ export default function MovieSlider({ title, endpoint }: MovieSliderProps) {
       try {
         const response = await fetch(endpoint);
         const data = await response.json();
-        setMovies(data.results);
+        const moviesWithType = data.results.map((movie: Movie) => ({
+          ...movie,
+          media_type: mediaType,
+        }));
+        setMovies(moviesWithType);
       } catch (error) {
         console.error("Error fetching movies:", error);
       } finally {
@@ -30,7 +40,7 @@ export default function MovieSlider({ title, endpoint }: MovieSliderProps) {
     };
 
     fetchMovies();
-  }, [endpoint]);
+  }, [endpoint, mediaType]);
 
   const handleScroll = (direction: "left" | "right") => {
     if (!containerRef.current) return;

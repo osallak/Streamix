@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Streamix",
-  description: "Your favorite streaming platform",
+  description: "Watch your favorite movies and TV shows",
 };
